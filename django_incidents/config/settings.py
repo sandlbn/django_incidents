@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 if os.environ.get("DATABASE_URL", None):
 
     # See: https://docs.djangoproject.com/en/dev/ref/settings/#debug
-    DEBUG = False
+    DEBUG = True
 else:
     DEBUG = True
 
@@ -52,18 +52,12 @@ ADMINS = (
 MANAGERS = ADMINS
 ########## END MANAGER CONFIGURATION
 
-
 ########## DATABASE CONFIGURATION
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+DATABASES = {}
 import dj_database_url
-DATABASES = {'default': dj_database_url.config()}
-if DATABASES == {'default': {}}:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': "django_incidents",
-        }
-    }
+DATABASES['default'] =  dj_database_url.config()
+
 ########## END DATABASE CONFIGURATION
 
 
@@ -147,12 +141,14 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     'south',  # Database migration helpers:
     'crispy_forms',  # Form layouts
+    'bootstrap3',  # Form layouts
     'avatar',  # for user avatars
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'users',  # custom users app
+    'results',  # custom results app
     # Your stuff: custom apps go here
 )
 
@@ -244,7 +240,6 @@ else:
     INSTALLED_APPS += ("gunicorn", )
 
     ########## STORAGE CONFIGURATION
-    from S3 import CallingFormat
     from os import environ
     # See: http://django-storages.readthedocs.org/en/latest/index.html
     INSTALLED_APPS += (
@@ -252,27 +247,7 @@ else:
     )
 
     # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
-    STATICFILES_STORAGE = DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-    # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
-    AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
-
-    # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
-    AWS_ACCESS_KEY_ID = environ.get('AWS_ACCESS_KEY_ID', '')
-    AWS_SECRET_ACCESS_KEY = environ.get('AWS_SECRET_ACCESS_KEY', '')
-    AWS_STORAGE_BUCKET_NAME = environ.get('AWS_STORAGE_BUCKET_NAME', '')
-    AWS_AUTO_CREATE_BUCKET = True
-    AWS_QUERYSTRING_AUTH = False
-
-    # AWS cache settings, don't change unless you know what you're doing:
-    AWS_EXPIREY = 60 * 60 * 24 * 7
-    AWS_HEADERS = {
-        'Cache-Control': 'max-age=%d, s-maxage=%d, must-revalidate' % (AWS_EXPIREY,
-            AWS_EXPIREY)
-    }
-
-    # See: https://docs.djangoproject.com/en/dev/ref/settings/#static-url
-    STATIC_URL = 'https://s3.amazonaws.com/%s/' % AWS_STORAGE_BUCKET_NAME
+    #STATICFILES_STORAGE = DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     ########## END STORAGE CONFIGURATION
 
     ########## EMAIL
@@ -359,3 +334,4 @@ LOGGING = {
 
 
 ########## Your stuff: Below this line define 3rd party libary settings
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

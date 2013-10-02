@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load account %}
 {% load url from future %}
-{% load crispy_forms_tags %}
+{% load bootstrap3 %}
 
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
@@ -34,14 +34,16 @@
 
       {% endif %}
 
-      <form class="login" method="POST" action="{% url 'account_login' %}">
+      <form class="login form-horizontal" method="POST" action="{% url 'account_login' %}">
         {% csrf_token %}
-        {{ form|crispy }}
+        {% bootstrap_form form horizontal=True %}
         {% if redirect_field_value %}
         <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
+         {% bootstrap_form_buttons %}
         <a class="button secondaryAction" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+        {% end_bootstrap_form_buttons %}
       </form>
     </div>
   </div>
